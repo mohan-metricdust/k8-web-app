@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: mangodb
-        image: mango:5.0
+        image: mango:latest
         ports:
         - containerPort: 27017
         env:
