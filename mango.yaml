@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mango-deployment
+  labels:
+    app: mango
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mango
+  template:
+    metadata:
+      labels:
+        app: mango
+    spec:
+      containers:
+      - name: mangodb
+        image: mango:5.0
+        ports:
+        - containerPort: 27017
+        env:
+        - name: MANGO_INITDBD_ROOT_USERNAME
+          valueFrom: 
+            secretKeyRef:
+              name: mango-secret
+              key: mango-user
+        - name: MANGO_INITDB_ROOT_PASSWORD
+          valueFrom: 
+            secretKeyRef:
+              name: mango-secret
+              key: mango-password
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mango-service
+spec:
+  selector:
+    app.kubernetes.io/name: mango
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 27017
